@@ -1,12 +1,15 @@
-import { CRUD } from "../../interfaces/event";
+import CustomException from "../../exceptions/custom.exception";
 
 export class Role {
-  constructor(public id: number, public name: "admin" | "reviewer" | "editor") {
+  constructor(
+    public name: "admin" | "reviewer" | "editor" = "admin",
+    public id?: number
+  ) {
     this.id = id;
     this.name = name;
   }
 
-  public getId(): number {
+  public getId(): number | undefined {
     return this.id;
   }
 
@@ -21,21 +24,17 @@ export class Role {
     };
   }
 
-  public create(role: Role) {
-    const event = new CRUD();
-    event.create({ title: "create", data: role, occured_at: new Date() });
-    return event; // This is a mock implementation
-  }
+  public create(name: "admin" | "reviewer" | "editor", id?: number): Role {
+    const role = new Role(name, id);
 
-  public update(role: Role) {
-    const event = new CRUD();
-    event.update({ title: "update", data: role, occured_at: new Date() });
-    return event; // This is a mock implementation
-  }
+    if (name !== "admin" && name !== "reviewer" && name !== "editor") {
+      throw new CustomException(
+        "Invalid role name",
+        400,
+        "Role validation failed"
+      );
+    }
 
-  public delete(role: Role) {
-    const event = new CRUD();
-    event.delete({ title: "delete", data: role, occured_at: new Date() });
-    return event; // This is a mock implementation
+    return role;
   }
 }
